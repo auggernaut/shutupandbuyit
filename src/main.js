@@ -3,20 +3,45 @@
 
 import Vue from 'vue'
 import VueFire from 'vuefire'
+import VueRouter from 'vue-router'
 
+import MakeLink from './components/MakeLink'
+import GetLink from './components/GetLink'
 import App from './App'
-
-/*
- * Because we installed VueFire via npm and imported it as a module, we have
- * to add this little snippet of code to 'install' it. If you include the lib
- * via typical <script> tags in your HTML document, this isn't required.
- */
+import Firebase from 'firebase'
 
 Vue.use(VueFire)
+Vue.use(VueRouter)
+
+let config = {
+  apiKey: 'AIzaSyApIrAspdVpN3lhH9W1RGrLJEzIVS9mEaQ',
+  authDomain: 'shutupandbuyit-a2731.firebaseapp.com',
+  databaseURL: 'https://shutupandbuyit-a2731.firebaseio.com',
+  projectId: 'shutupandbuyit-a2731',
+  storageBucket: 'shutupandbuyit-a2731.appspot.com',
+  messagingSenderId: '173424466260'
+}
+
+// Here we are initializing the Firebase connection.
+let app = Firebase.initializeApp(config)
+let db = app.database()
+window.firebaseDB = db.ref('suabiLinks')
+
+const routes = [
+  { path: '/:id', component: GetLink },
+  { path: '/', component: MakeLink },
+  { path: '*', component: { template: '<div>Not found</div>' } }
+]
+
+const router = new VueRouter({
+  routes,
+  mode: 'history'
+})
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   template: '<App/>',
-  components: { App }
+  components: { App },
+  router
 })
