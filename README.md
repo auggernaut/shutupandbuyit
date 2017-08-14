@@ -1,4 +1,9 @@
-<img src="http://i.imgur.com/WQWi5sS.png" height="200px">
+# Shut up and buy it
+
+Tell your friends to shut up and buy it. Redirects to a product page after showing a message to a friend about how they should just shut up and buy it.
+
+
+Forked from: https://github.com/sejr/vuefire-quickstart
 
 # vuefire-quickstart
 
