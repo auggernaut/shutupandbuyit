@@ -7,19 +7,14 @@
 <template>
   <div id="MakeLink">
     <img src="../assets/babyface.png" id="titleImage">
-    <!-- Adding a new greeting; pretty much straight from the documentation! -->
-    <h1>Tell your friends why to<br/>shut up and buy it.</h1>
+    <h1>Tell your friends to<br/>shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
-      <textarea type="text" v-model="userInput.message" placeholder="Message" id='message' class='center' />
+      <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' />
       <input type="text" v-model="userInput.prodUrl" placeholder="Product Url" class='center'>
       <input type="submit" value="Get Link" class='button'>
     </form>
-    <!--
-      Here we are iterating through a very simply array of suabiLinks in
-      different languages. To do this, we use the "v-for" directive. This
-      is linked to our demo Firebase instance, which is described below.
-    -->
     <h3><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
+    <h4 v-for="sl in this.suabiLinks"><a :href='sl.prodUrl'>{{ sl.message }}</a></h4>
   </div>
 </template>
 
@@ -28,21 +23,18 @@
 
   export default {
     name: 'MakeLink',
-
-    /*
-     * This section is added to the original CLI-generated App component. This
-     * is where VueFire comes into play, allowing us to link our Vue MakeLink to
-     * Firebase data relatively simply. More information is on the GitHub page:
-     *
-     * https://github.com/vuejs/vuefire/
-     */
-
-    // firebase: {
-    //   suabiLinks: suabiLinksRef.child(id)
-    // },
-
+    created () {
+      // fetch the data when the view is created and the data is
+      // already being observed
+      this.fetchSuabis()
+    },
+    watch: {
+      // call again the method if the route changes
+      '$route': 'fetchSuabis'
+    },
     data () {
       return {
+        suabiLinks: [],
         suabiLink: '',
         userInput: {
           message: '',
@@ -60,6 +52,14 @@
         window.firebaseDB.child(id).set(this.userInput)
         // this.userInput.fromName = ''
         // this.userInput.prodUrl = ''
+      },
+      fetchSuabis: function () {
+        let _this = this
+        window.firebaseDB.limitToLast(5).on('child_added', function (snapshot) {
+          let item = snapshot.val()
+          item.prodUrl += '&tag=shutupandbuyi-20'
+          _this.suabiLinks.push(item)
+        })
       }
     }
   }
