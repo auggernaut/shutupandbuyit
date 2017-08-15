@@ -6,7 +6,11 @@
 
 <template>
   <div id="GetLink">
-    {{ this.userInput.fromName }} says shut up and buy it.
+    <div class="loading" v-if="loading">
+      Loading...
+    </div>
+    <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1>
+    <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1>
     <!-- <h1><a :href='this.userInput.prodUrl'>{{ this.userInput }}</a></h1> -->
   </div>
 </template>
@@ -19,7 +23,7 @@
       return {
         suabiLink: '',
         userInput: {
-          fromName: '',
+          message: '',
           prodUrl: ''
         }
       }
@@ -35,12 +39,20 @@
     },
     methods: {
       fetchData () {
+        this.loading = true
         let _this = this
         window.firebaseDB.child(this.$route.params.id).on('value', function (snapshot, prevChildKey) {
           _this.userInput = snapshot.val()
+          _this.loading = false
+          setTimeout(function () {
+            var slide1 = document.querySelector('.slide1')
+            var slide2 = document.querySelector('.slide2')
+            slide1.classList.remove('is-paused')
+            slide2.classList.remove('is-paused')
+          }, 3000)
           setTimeout(function () {
             window.location = _this.userInput.prodUrl + '&tag=shutupandbuyi-20'
-          }, 3000)
+          }, 5000)
         })
       }
     }
@@ -57,8 +69,29 @@
     margin-top: 60px;
   }
 
-  #titleImage{
-    height: 150px;
-    border-radius: 150px;
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 1s ease-in 1 forwards;
+  }
+
+  .fade-out {
+    opacity: 1;
+    animation: fadeOut 1s ease-in 1 forwards;
+  }
+
+  .is-paused {
+    animation-play-state: paused;
   }
 </style>
