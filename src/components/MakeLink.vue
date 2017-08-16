@@ -14,8 +14,10 @@
     <h3><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
     <div class='masonry'>
       <div class="item" v-for="sl in this.suabiLinks">
-        <img :src="sl.prodImage.mediumImage"/>
-        <h4><a :href='sl.suabiId'>{{ sl.message }}</a></h4>
+        <a :href='sl.suabiId'>
+          <img :src="sl.prodImage.mediumImage"/>
+          <h4>{{ sl.message }}</h4>
+        </a>
       </div>
     </div>
   </div>

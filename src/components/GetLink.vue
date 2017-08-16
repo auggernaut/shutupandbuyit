@@ -3,10 +3,10 @@
     <div class="loading" v-if="loading">
       Loading...
     </div>
-    <img :src="userInput.prodImage.largeImage"  v-else/>
+    <img :src="userInput.prodImage.largeImage" v-else/>
     <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1>
     <!-- <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1> -->
-    <button v-on:click="suabiClick" class='button'>Shut up and buy it</button>
+    <button v-on:click="suabiClick" class='button' v-if="loading === false">Shut up and buy it</button>
     <!-- <h1><a :href='this.userInput.prodUrl'>{{ this.userInput }}</a></h1> -->
   </div>
 </template>
