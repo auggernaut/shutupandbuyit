@@ -1,16 +1,12 @@
-<!-- App.vue
-  This component is the root component for our Vue MakeLinklication. It is rendered
-  in the project root's index.html file with the <div id="MakeLink"> tag. The Firebase
-  instance exists only within this component.
--->
-
 <template>
   <div id="GetLink">
     <div class="loading" v-if="loading">
       Loading...
     </div>
+    <img :src="userInput.prodImage.largeImage"  v-else/>
     <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1>
-    <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1>
+    <!-- <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1> -->
+    <button v-on:click="suabiClick" class='button'>Shut up and buy it</button>
     <!-- <h1><a :href='this.userInput.prodUrl'>{{ this.userInput }}</a></h1> -->
   </div>
 </template>
@@ -24,7 +20,12 @@
         suabiLink: '',
         userInput: {
           message: '',
-          prodUrl: ''
+          prodUrl: '',
+          prodImage: {
+            smallImage: '',
+            mediumImage: '',
+            largeImage: ''
+          }
         }
       }
     },
@@ -44,18 +45,21 @@
         window.firebaseDB.child(this.$route.params.id).on('value', function (snapshot, prevChildKey) {
           _this.userInput = snapshot.val()
           _this.loading = false
-          setTimeout(function () {
-            var slide1 = document.querySelector('.slide1')
-            var slide2 = document.querySelector('.slide2')
-            slide1.classList.remove('is-paused')
-            slide2.classList.remove('is-paused')
-          }, 3000)
-          setTimeout(function () {
-            let char = ''
-            if (_this.userInput.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
-            window.location = _this.userInput.prodUrl + char + 'tag=shutupandbuyi-20'
-          }, 5000)
+          // setTimeout(function () {
+          //   var slide1 = document.querySelector('.slide1')
+          //   var slide2 = document.querySelector('.slide2')
+          //   slide1.classList.remove('is-paused')
+          //   slide2.classList.remove('is-paused')
+          // }, 3000)
+          // setTimeout(function () {
+          //
+          // }, 5000)
         })
+      },
+      suabiClick () {
+        let char = ''
+        if (this.userInput.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
+        window.location = this.userInput.prodUrl + char + 'tag=shutupandbuyi-20'
       }
     }
   }

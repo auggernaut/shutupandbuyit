@@ -1,25 +1,29 @@
-<!-- App.vue
-  This component is the root component for our Vue MakeLinklication. It is rendered
-  in the project root's index.html file with the <div id="MakeLink"> tag. The Firebase
-  instance exists only within this component.
--->
-
 <template>
   <div id="MakeLink">
     <img src="../assets/babyface.png" id="titleImage">
     <h1>Tell your friends to<br/>shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
+      <input type="text" v-model="userInput.prodUrl" placeholder="Product Url" class='center' @change="getProductImage">
+      <div class="loading" v-if="loading">
+        Loading...
+      </div>
+      <img :src="userInput.prodImage.mediumImage" v-else/>
       <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' />
-      <input type="text" v-model="userInput.prodUrl" placeholder="Product Url" class='center'>
       <input type="submit" value="Get Link" class='button'>
     </form>
     <h3><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
-    <h4 v-for="sl in this.suabiLinks"><a :href='sl.prodUrl'>{{ sl.message }}</a></h4>
+    <div class='masonry'>
+      <div class="item" v-for="sl in this.suabiLinks">
+        <img :src="sl.prodImage.mediumImage"/>
+        <h4><a :href='sl.suabiId'>{{ sl.message }}</a></h4>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   var hash = require('json-hash')
+  var axios = require('axios')
 
   export default {
     name: 'MakeLink',
@@ -34,11 +38,17 @@
     },
     data () {
       return {
+        loading: false,
         suabiLinks: [],
         suabiLink: '',
         userInput: {
           message: '',
-          prodUrl: ''
+          prodUrl: '',
+          prodImage: {
+            smallImage: '',
+            mediumImage: '',
+            largeImage: ''
+          }
         }
       }
     },
@@ -60,8 +70,31 @@
           let char = ''
           if (item.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
           item.prodUrl += char + 'tag=shutupandbuyi-20'
+          item.suabiId = snapshot.key
           _this.suabiLinks.push(item)
         })
+      },
+      getProductImage: function () {
+        this.loading = true
+        var _this = this
+        var asin = this.userInput.prodUrl.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
+        console.log(asin[1])
+        var saUrl = 'https://suabi-amazon.herokuapp.com/pId/' + asin[1]
+        axios.get(saUrl)
+          .then(function (response) {
+            console.log(response)
+            _this.loading = false
+            var ref
+            _this.userInput.prodImage = {
+              smallImage: (ref = response.data.SmallImage) != null ? ref.URL : void 0,
+              mediumImage: (ref = response.data.MediumImage) != null ? ref.URL : void 0,
+              largeImage: (ref = response.data.LargeImage) != null ? ref.URL : void 0
+            }
+          })
+          .catch(function (error) {
+            console.log(error.message)
+            _this.loading = false
+          })
       }
     }
   }
@@ -133,5 +166,17 @@
     border-radius: 200px;
     top: 4px;
     position: relative;
+  }
+
+  .masonry { /* Masonry container */
+    column-count: 4;
+    column-gap: 1em;
+  }
+
+  .item { /* Masonry bricks or child elements */
+    background-color: #eee;
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
   }
 </style>
