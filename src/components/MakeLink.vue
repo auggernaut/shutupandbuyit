@@ -55,9 +55,11 @@
       },
       fetchSuabis: function () {
         let _this = this
-        window.firebaseDB.limitToLast(5).on('child_added', function (snapshot) {
+        window.firebaseDB.limitToLast(15).on('child_added', function (snapshot) {
           let item = snapshot.val()
-          item.prodUrl += '&tag=shutupandbuyi-20'
+          let char = ''
+          if (item.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
+          item.prodUrl += char + 'tag=shutupandbuyi-20'
           _this.suabiLinks.push(item)
         })
       }

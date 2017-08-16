@@ -51,7 +51,10 @@
             slide2.classList.remove('is-paused')
           }, 3000)
           setTimeout(function () {
-            window.location = _this.userInput.prodUrl + '&tag=shutupandbuyi-20'
+            let char = ''
+            if (_this.userInput.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
+            debugger
+            window.location = _this.userInput.prodUrl + char + 'tag=shutupandbuyi-20'
           }, 5000)
         })
       }
