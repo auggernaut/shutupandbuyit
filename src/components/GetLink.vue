@@ -53,7 +53,6 @@
           setTimeout(function () {
             let char = ''
             if (_this.userInput.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
-            debugger
             window.location = _this.userInput.prodUrl + char + 'tag=shutupandbuyi-20'
           }, 5000)
         })
