@@ -6,7 +6,7 @@ import VueFire from 'vuefire'
 import VueRouter from 'vue-router'
 
 import MakeLink from './components/MakeLink'
-import GetLink from './components/GetLink'
+import ViewLink from './components/ViewLink'
 import App from './App'
 import Firebase from 'firebase'
 
@@ -28,7 +28,7 @@ let db = app.database()
 window.firebaseDB = db.ref('suabiLinks')
 
 const routes = [
-  { path: '/p/:id', component: GetLink },
+  { path: '/p/:id', component: ViewLink },
   { path: '/', component: MakeLink },
   { path: '*', component: { template: '<div>Not found</div>' } }
 ]

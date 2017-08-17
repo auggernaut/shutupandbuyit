@@ -1,5 +1,5 @@
 <template>
-  <div id="GetLink">
+  <div id="ViewLink">
     <div class="loading" v-if="loading">
       Loading...
     </div>
@@ -13,7 +13,7 @@
 
 <script>
   export default {
-    name: 'GetLink',
+    name: 'ViewLink',
 
     data () {
       return {
@@ -73,7 +73,7 @@
     width: 100%;
   }
 
-  #GetLink {
+  #ViewLink {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -81,6 +81,12 @@
     color: #2c3e50;
     margin-top: 30px;
     padding-bottom:50px;
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
+    background-color: #fff;
+    padding: 5% 5% 30px 5%;
+    box-sizing: border-box;
   }
 
   @keyframes fadeIn {

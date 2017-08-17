@@ -3,15 +3,15 @@
     <img src="../assets/babyface.png" id="titleImage">
     <h1 id='headline'>Tell your friends to shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
-      <input type="text" v-model="userInput.prodUrl" placeholder="Product Url" class='center' @change="getProductImage">
+      <input type="text" v-model="userInput.prodUrl" placeholder="Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
       <div class="loading" v-if="loading">
-        Loading...
+        Loading image...
       </div>
       <img :src="userInput.prodImage.mediumImage" v-else/>
       <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' />
-      <input type="submit" value="Get Link" class='button'>
+      <input type="submit" value="Get Link" class='button' :disabled="error">
     </form>
-    <h3><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
+    <h3 id='suabiLink'><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
     <div class='masonry'>
       <div class="item" v-for="sl in this.suabiLinks">
         <a :href="'/p/' + sl.suabiId">
@@ -26,6 +26,7 @@
 <script>
   var hash = require('json-hash')
   var axios = require('axios')
+  var _ = require('lodash')
 
   export default {
     name: 'MakeLink',
@@ -41,6 +42,7 @@
     data () {
       return {
         loading: false,
+        error: false,
         suabiLinks: [],
         suabiLink: '',
         userInput: {
@@ -58,12 +60,24 @@
     // We have added a simple method to add new suabiLinks to our Firebase.
     methods: {
       addSuabiLink: function () {
-        // this.userInput.id = Math.random().toString(36).substr(2, 9)
-        var id = hash.digest(this.userInput).substr(2, 10)
-        this.suabiLink = '/p/' + id
-        window.firebaseDB.child(id).set(this.userInput)
-        // this.userInput.fromName = ''
-        // this.userInput.prodUrl = ''
+        if (this.userInput.prodUrl !== '' && this.userInput.message !== '') {
+          var id = hash.digest(this.userInput).substr(2, 10)
+          this.suabiLink = '/p/' + id
+          let _this = this
+          window.firebaseDB.child(id).set(this.userInput, function (error) {
+            if (error) {
+              console.log('Data could not be saved.' + error)
+            } else {
+              _this.userInput.message = ''
+              _this.userInput.prodUrl = ''
+              _this.userInput.prodImage = {
+                smallImage: '',
+                mediumImage: '',
+                largeImage: ''
+              }
+            }
+          })
+        }
       },
       fetchSuabis: function () {
         let _this = this
@@ -80,22 +94,52 @@
         this.loading = true
         var _this = this
         var asin = this.userInput.prodUrl.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
-        console.log(asin[1])
+        if (asin === null) {
+          // product id not found.
+          this.error = true
+          this.loading = false
+          return
+        }
         var saUrl = 'https://suabi-amazon.herokuapp.com/pId/' + asin[1]
         axios.get(saUrl)
           .then(function (response) {
-            console.log(response)
             _this.loading = false
-            var ref
-            _this.userInput.prodImage = {
-              smallImage: (ref = response.data.SmallImage) != null ? ref.URL : void 0,
-              mediumImage: (ref = response.data.MediumImage) != null ? ref.URL : void 0,
-              largeImage: (ref = response.data.LargeImage) != null ? ref.URL : void 0
+            console.log(response)
+            var largeImage, smallImage, mediumImage
+            if (response.data !== '') {
+              if (_.findKey(response, (k) => k.LargeImage) !== undefined) {
+                largeImage = response.data.LargeImage.URL
+              } else if (_.findKey(response.data.ImageSets, (k) => k.LargeImage) !== undefined) {
+                largeImage = response.data.ImageSets.ImageSet.LargeImage.URL
+              }
+              if (_.findKey(response, (k) => k.MediumImage) !== undefined) {
+                mediumImage = response.data.MediumImage.URL
+              } else if (_.findKey(response.data.ImageSets, (k) => k.MediumImage) !== undefined) {
+                mediumImage = response.data.ImageSets.ImageSet.MediumImage.URL
+              }
+              if (_.findKey(response, (k) => k.SmallImage) !== undefined) {
+                smallImage = response.data.SmallImage.URL
+              } else if (_.findKey(response.data.ImageSets, (k) => k.SmallImage) !== undefined) {
+                smallImage = response.data.ImageSets.ImageSet.SmallImage.URL
+              }
+            }
+            if (smallImage !== undefined && mediumImage !== undefined && largeImage !== undefined) {
+              _this.error = false
+              _this.userInput.prodImage = {
+                smallImage: smallImage,
+                mediumImage: mediumImage,
+                largeImage: largeImage
+              }
+            } else {
+              // didnt find all images.
+              _this.error = true
             }
           })
           .catch(function (error) {
+            debugger
             console.log(error.message)
             _this.loading = false
+            _this.error = true
           })
       }
     }
@@ -103,6 +147,14 @@
 </script>
 
 <style>
+  body {
+    margin: 0 auto;
+    background-color: rgba(244,244,244,.8);
+  }
+
+  #app {
+  }
+
   #headline {
     max-width: 420px;
     margin: 0 auto;
@@ -115,11 +167,21 @@
     max-width: 600px;
     width: 90%;
     margin-bottom: 20px;
-    border-radius: 8px;
-    border: 3px solid rgba(0,0,0,.2);
+    border-color: #c7c7c7;
+    border-style: solid;
+    border-width: 1px 1px 3px 1px;
+    border-radius: 5px;
     line-height: 31px;
     font-size: 20px;
     padding: 10px;
+  }
+
+  #suabiLink{
+    padding: 15px 0px;
+  }
+
+  .error {
+    border: 1px solid red;
   }
 
   a {
@@ -131,10 +193,10 @@
   }
 
   .button {
-    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    /*-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
   	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  	box-shadow:inset 0px 1px 0px 0px #ffffff;
-  	background-color:transparent;
+  	box-shadow:inset 0px 1px 0px 0px #ffffff;*/
+  	background-color: rgba(46,204,64, .7);
   	-moz-border-radius:6px;
   	-webkit-border-radius:6px;
   	border-radius:6px;
@@ -143,20 +205,24 @@
   	cursor:pointer;
   	color:black;
   	font-family:Arial;
-  	font-size:20px;
+  	font-size:22px;
   	font-weight:bold;
-  	padding:10px 24px;
+  	padding:14px 44px;
   	text-decoration:none;
-  	text-shadow:0px 1px 0px #ffffff;
+  	/*text-shadow:0px 1px 0px #ffffff;*/
   }
 
   .button:hover {
-  	background-color:#ddd;
+  	background-color: rgb(46,204,64);
   }
 
   .button:active {
   	position:relative;
   	top:1px;
+  }
+
+  .button.red {
+    background-color: #FF4136;
   }
 
   #MakeLink {
@@ -165,13 +231,14 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 50px;
+    padding-top: 50px;
     font-size: 20px;
+    padding: 50px 20px 0 20px;
   }
 
   #titleImage{
-    height: 200px;
-    border-radius: 200px;
+    height: 220px;
+    border-radius: 220px;
     top: 4px;
     position: relative;
   }
@@ -180,6 +247,9 @@
     .masonry { /* Masonry container */
       column-count: 2;
       column-gap: 1em;
+    }
+    #MakeLink {
+      padding: 30px 4px 0 4px;
     }
   }
 
@@ -190,10 +260,15 @@
     }
   }
   .item { /* Masonry bricks or child elements */
-    background-color: #eee;
     display: inline-block;
     margin: 0 0 1em;
     width: 100%;
-    border-radius: 10px;
+    border-color: #c7c7c7;
+    border-style: solid;
+    border-width: 1px 1px 3px 1px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-sizing: border-box;
+    padding: 5%;
   }
 </style>
