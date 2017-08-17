@@ -20,6 +20,7 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
       //  +
       // "<meta property='og:site_name' content='Shut up and buy it'/>" +
       // "<meta property='og:description' content='Shut up and buy it'/>"
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     res.status(200).send( `<!DOCTYPE html><html><head>${meta}<title>Shut up and buy it</title><link href=/static/css/app.47b3d2ced944ba1be638dbb4fdd176ed.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/js/manifest.2201bf4db46176f5162e.js></script><script type=text/javascript src=/static/js/vendor.eb0db8723b4e12fd4711.js></script><script type=text/javascript src=/static/js/app.8a0dd62d8bc38277b550.js></script></body></html>` );
   });
 });
