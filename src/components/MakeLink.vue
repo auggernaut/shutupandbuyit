@@ -1,7 +1,7 @@
 <template>
   <div id="MakeLink">
     <img src="../assets/babyface.png" id="titleImage">
-    <h1>Tell your friends to<br/>shut up and buy it.</h1>
+    <h1 id='headline'>Tell your friends to shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
       <input type="text" v-model="userInput.prodUrl" placeholder="Product Url" class='center' @change="getProductImage">
       <div class="loading" v-if="loading">
@@ -103,11 +103,17 @@
 </script>
 
 <style>
+  #headline {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 30px 0px;
+  }
+
   .center {
     display: block;
     margin: 0 auto;
-    max-width: 400px;
-    width: 100%;
+    max-width: 600px;
+    width: 90%;
     margin-bottom: 20px;
     border-radius: 8px;
     border: 3px solid rgba(0,0,0,.2);
@@ -170,15 +176,24 @@
     position: relative;
   }
 
-  .masonry { /* Masonry container */
-    column-count: 4;
-    column-gap: 1em;
+  @media (max-width: 480px) {
+    .masonry { /* Masonry container */
+      column-count: 2;
+      column-gap: 1em;
+    }
   }
 
+  @media (min-width: 481px) {
+    .masonry { /* Masonry container */
+      column-count: 4;
+      column-gap: 1em;
+    }
+  }
   .item { /* Masonry bricks or child elements */
     background-color: #eee;
     display: inline-block;
     margin: 0 0 1em;
     width: 100%;
+    border-radius: 10px;
   }
 </style>

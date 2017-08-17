@@ -3,7 +3,7 @@
     <div class="loading" v-if="loading">
       Loading...
     </div>
-    <img :src="userInput.prodImage.largeImage" v-else/>
+    <img :src="userInput.prodImage.largeImage" v-else id='prodImage'/>
     <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1>
     <!-- <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1> -->
     <button v-on:click="suabiClick" class='button' v-if="loading === false">Shut up and buy it</button>
@@ -66,13 +66,20 @@
 </script>
 
 <style>
+  #prodImage {
+    max-width: 720px;
+    max-height: 500px;
+    object-fit: contain;
+    width: 100%;
+  }
+
   #GetLink {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    margin-top: 30px;
   }
 
   @keyframes fadeIn {
