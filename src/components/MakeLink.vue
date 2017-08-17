@@ -14,7 +14,7 @@
     <h3><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
     <div class='masonry'>
       <div class="item" v-for="sl in this.suabiLinks">
-        <a :href='sl.suabiId'>
+        <a :href="'/p/' + sl.suabiId">
           <img :src="sl.prodImage.mediumImage"/>
           <h4>{{ sl.message }}</h4>
         </a>
@@ -60,7 +60,7 @@
       addSuabiLink: function () {
         // this.userInput.id = Math.random().toString(36).substr(2, 9)
         var id = hash.digest(this.userInput).substr(2, 10)
-        this.suabiLink = '/' + id
+        this.suabiLink = '/p/' + id
         window.firebaseDB.child(id).set(this.userInput)
         // this.userInput.fromName = ''
         // this.userInput.prodUrl = ''

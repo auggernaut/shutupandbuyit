@@ -34,3 +34,7 @@ webpack(webpackConfig, function (err, stats) {
     chunkModules: false
   }) + '\n')
 })
+
+// copies index.html into cloud function that customizes meta tags
+sed('-i', '`.*`', '`' + cat('dist/index.html') + '`', 'functions/index.js')
+sed('-i', '<meta charset=utf-8>', '${meta}', 'functions/index.js')

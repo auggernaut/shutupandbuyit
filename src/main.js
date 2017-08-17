@@ -28,7 +28,7 @@ let db = app.database()
 window.firebaseDB = db.ref('suabiLinks')
 
 const routes = [
-  { path: '/:id', component: GetLink },
+  { path: '/p/:id', component: GetLink },
   { path: '/', component: MakeLink },
   { path: '*', component: { template: '<div>Not found</div>' } }
 ]
