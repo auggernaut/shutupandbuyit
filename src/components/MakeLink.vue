@@ -1,6 +1,6 @@
 <template>
   <div id="MakeLink">
-    <img src="../assets/babyface.png" id="titleImage">
+    <img src="../assets/suabi.png" id="titleImage">
     <h1 id='headline'>Tell your friends to shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
       <input type="text" v-model="userInput.prodUrl" placeholder="Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
@@ -81,7 +81,7 @@
       },
       fetchSuabis: function () {
         let _this = this
-        window.firebaseDB.limitToLast(15).on('child_added', function (snapshot) {
+        window.firebaseDB.limitToLast(35).on('child_added', function (snapshot) {
           let item = snapshot.val()
           let char = ''
           if (item.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
@@ -93,6 +93,7 @@
       getProductImage: function () {
         this.loading = true
         var _this = this
+        this.userInput.prodUrl = this.userInput.prodUrl.match('https?:\/\/[^*]+')[0]
         var asin = this.userInput.prodUrl.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
         if (asin === null) {
           // product id not found.
@@ -136,7 +137,6 @@
             }
           })
           .catch(function (error) {
-            debugger
             console.log(error.message)
             _this.loading = false
             _this.error = true
@@ -153,6 +153,10 @@
   }
 
   #app {
+  }
+
+  .loading {
+    padding: 10px;
   }
 
   #headline {
@@ -238,6 +242,7 @@
 
   #titleImage{
     height: 220px;
+    width: 220px;
     border-radius: 220px;
     top: 4px;
     position: relative;

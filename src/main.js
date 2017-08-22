@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
 import Vue from 'vue'
-import VueFire from 'vuefire'
+// import VueFire from 'vuefire'
 import VueRouter from 'vue-router'
 
 import MakeLink from './components/MakeLink'
@@ -10,7 +10,7 @@ import ViewLink from './components/ViewLink'
 import App from './App'
 import Firebase from 'firebase'
 
-Vue.use(VueFire)
+// Vue.use(VueFire)
 Vue.use(VueRouter)
 
 let config = {
