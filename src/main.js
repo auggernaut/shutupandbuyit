@@ -5,8 +5,8 @@ import Vue from 'vue'
 // import VueFire from 'vuefire'
 import VueRouter from 'vue-router'
 
-import MakeLink from './components/MakeLink'
-import ViewLink from './components/ViewLink'
+import Home from './components/Home'
+import Suabi from './components/Suabi'
 import App from './App'
 import Firebase from 'firebase'
 
@@ -28,8 +28,8 @@ let db = app.database()
 window.firebaseDB = db.ref('suabiLinks')
 
 const routes = [
-  { path: '/p/:id', component: ViewLink },
-  { path: '/', component: MakeLink },
+  { path: '/s/:id', component: Suabi },
+  { path: '/', component: Home },
   { path: '*', component: { template: '<div>Not found</div>' } }
 ]
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="ViewLink">
+  <div id="Suabi">
     <div class="loading" v-if="loading">
       Loading...
     </div>
@@ -8,15 +8,17 @@
     <!-- <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1> -->
     <button v-on:click="suabiClick" class='button' v-if="loading === false">Shut up and buy it</button>
     <!-- <h1><a :href='this.userInput.prodUrl'>{{ this.userInput }}</a></h1> -->
+    <div class='fb-comments' :data-href="'https://shutupandbuy.it' + this.$route.path" data-numposts='20' :data-width='this.width' id='comments'></div>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'ViewLink',
+    name: 'Suabi',
 
     data () {
       return {
+        width: '',
         suabiLink: '',
         userInput: {
           message: '',
@@ -33,6 +35,7 @@
       // fetch the data when the view is created and the data is
       // already being observed
       this.fetchData()
+      this.width = window.innerWidth * 0.85
     },
     watch: {
       // call again the method if the route changes
@@ -73,7 +76,7 @@
     width: 100%;
   }
 
-  #ViewLink {
+  #Suabi {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -114,4 +117,5 @@
   .is-paused {
     animation-play-state: paused;
   }
+
 </style>

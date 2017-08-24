@@ -1,5 +1,5 @@
 <template>
-  <div id="MakeLink">
+  <div id="Home">
     <img src="../assets/suabi.png" id="titleImage">
     <h1 id='headline'>Tell your friends to shut up and buy it.</h1>
     <form id="form" v-on:submit.prevent="addSuabiLink">
@@ -14,7 +14,7 @@
     <h3 id='suabiLink'><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
     <div class='masonry'>
       <div class="item" v-for="sl in this.suabiLinks">
-        <a :href="'/p/' + sl.suabiId">
+        <a :href="'/s/' + sl.suabiId">
           <img :src="sl.prodImage.mediumImage"/>
           <h4>{{ sl.message }}</h4>
         </a>
@@ -29,7 +29,7 @@
   var _ = require('lodash')
 
   export default {
-    name: 'MakeLink',
+    name: 'Home',
     created () {
       // fetch the data when the view is created and the data is
       // already being observed
@@ -214,6 +214,7 @@
   	padding:14px 44px;
   	text-decoration:none;
   	/*text-shadow:0px 1px 0px #ffffff;*/
+    margin: 0 auto;
   }
 
   .button:hover {
@@ -229,7 +230,7 @@
     background-color: #FF4136;
   }
 
-  #MakeLink {
+  #Home {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -248,12 +249,24 @@
     position: relative;
   }
 
+  #suabiImage {
+    height: 220px;
+    width: 220px;
+    border-radius: 220px;
+    top: 4px;
+    position: relative;
+  }
+
+  #landingTitle {
+    font-size: 4em;
+  }
+
   @media (max-width: 480px) {
     .masonry { /* Masonry container */
       column-count: 2;
       column-gap: 1em;
     }
-    #MakeLink {
+    #Home {
       padding: 30px 4px 0 4px;
     }
   }

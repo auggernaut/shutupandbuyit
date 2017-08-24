@@ -28,13 +28,11 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
       "<meta name='twitter:description' content='" + message + "'>" +
       "<meta name='twitter:text:description' content='" + message + "'>" +
       "<meta name='twitter:image' content='" + image + "'>" +
-      "<link href='/static/css/app.8304b055064f87c7204f294e6baa09d2.css' rel=stylesheet>" +
+      "<link href='/static/css/app.13f56867cebeae04ae405ff2571269d0.css' rel=stylesheet>" +
       "<title>Shut up and buy it</title>" +
-      "</head><body><div id='app'><div id='ViewLink'>" +
-      "<img src='" + image + "' id='prodImage'/><h1 id='message'>" + message + "</h1>" +
-      "<a href='" + prodUrl + delimiter + "tag=shutupandbuyi-20'><button class='button'>Shut up and buy it</button></a>" +
-      "</div><div class='fb-comments' data-href='https://shutupandbuy.it/p/" + suabiId + "' data-numposts='20' data-width='375' style='width:375px;margin: 0 auto;display:block'></div>" +
-      "<div id='fb-root'></div>\n<script>(function(d, s, id) {\n  var js, fjs = d.getElementsByTagName(s)[0];\n  if (d.getElementById(id)) return;\n  js = d.createElement(s); js.id = id;\n  js.src = '//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=712648035572474';\n  fjs.parentNode.insertBefore(js, fjs);\n}(document, 'script', 'facebook-jssdk'));</script>" +
+      "<script type='text/javascript'> var timer = setTimeout(function() {window.location.href = '" + prodUrl + delimiter + "tag=shutupandbuyi-20'}, 3000);</script>" +
+      "</head><body><div id='app'>" +
+      "<img src='/static/img/suabi.2a04a68.png' id='suabiImage'/><h1 id='landingTitle'>Shut up<br/>and buy it.</h1>" +
       "</div></body></html>"
     res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     res.status(200).send( doc );
