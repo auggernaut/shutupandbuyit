@@ -28,12 +28,12 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
       "<meta name='twitter:description' content='" + message + "'>" +
       "<meta name='twitter:text:description' content='" + message + "'>" +
       "<meta name='twitter:image' content='" + image + "'>" +
-      "<link href='/static/css/app.13f56867cebeae04ae405ff2571269d0.css' rel=stylesheet>" +
+      "<link href='/static/css/app.984a7e29f605649c7305ae30460dd82a.css' rel=stylesheet>" +
       "<title>Shut up and buy it</title>" +
       "<script type='text/javascript'> var timer = setTimeout(function() {window.location.href = '" + prodUrl + delimiter + "tag=shutupandbuyi-20'}, 3000);</script>" +
-      "</head><body><div id='app'>" +
+      "</head><body><div id='app'><div id='Suabi'>" +
       "<img src='/static/img/suabi.2a04a68.png' id='suabiImage'/><h1 id='landingTitle'>Shut up<br/>and buy it.</h1>" +
-      "</div></body></html>"
+      "</div></div></body></html>"
     res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     res.status(200).send( doc );
   });
