@@ -1,25 +1,122 @@
 <template>
   <div id="Home">
-    <img src="../assets/suabi.png" id="titleImage">
-    <h1 id='headline'>Tell your friends to shut up and buy it.</h1>
-    <form id="form" v-on:submit.prevent="addSuabiLink">
-      <input type="text" v-model="userInput.prodUrl" placeholder="Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
-      <div class="loading" v-if="loading">
-        Loading image...
+    <!-- <img src="../assets/suabi.png" id="titleImage"> -->
+    <header id="header">
+      <h1 id='headline'>Shut up and buy it.</h1>
+      <h3>Enter an Amazon product link.<br/>Get a short link. Share it. Bask in the joy.</h3>
+      <form id="form" v-on:submit.prevent="addSuabiLink">
+        <input type="text" v-model="userInput.prodUrl" placeholder="Paste an Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
+        <div class="loading" v-if="loading">
+          Loading image...
+        </div>
+        <img :src="userInput.prodImage.mediumImage" v-else/>
+        <!-- <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' /> -->
+        <input type="submit" value="Get Link" class='button' :disabled="error">
+      </form>
+      <h3 id='suabiLink'><a :href='this.suabiLink'>suab.it{{ this.suabiLink }}</a></h3>
+    </header>
+
+    <div id="intro">
+      <!-- <p>You need to buy that 3rd Amazon Echo, maybe some smart lights, and what the hell some of those bouncy balls too.<br/>Why? Because just shut up and buy it, that's why. You know you'll feel better.</p> -->
+      <!-- <p>Enter an Amazon product url. We'll give you a short link that flashes "Shut up and buy it" before redirecting to the product.</p> -->
+      <p>Don't let people miss out on the joy of one-click buying.</p>
+      <p>Tell them to shut up and buy it.</p>
+      <!-- Amazon doesn't have a tagline.<br/>But if they did it would definitely be "Shut up and buy it."</h3> -->
+    </div>
+        
+    <div id="content">
+      <div class="features">
+        <div class="feature">
+          <img src='../assets/trophy.svg' class='feature-icon' />
+          <h3 class="short">Compete</h3>
+          <p class="flush-bottom">
+            Join the world's smallest community of unabashed product pushers. See if you can make the top 10!
+          </p>
+        </div>
+        <div class="feature">
+          <img src='../assets/networking.svg' class='feature-icon' />          
+          <h3 class="short">Shout</h3>
+          <p class="flush-bottom">
+            It's too easy to be just another annoying voice on social media. Let us shout at people to shut up and buy it for you.
+          </p>
+        </div>
+        <div class="feature">
+          <img src='../assets/support.svg' class='feature-icon' />          
+          <h3 class="short">Customize</h3>
+          <p class="flush-bottom">
+            Coming soon: select from a variety of interstitials--each designed to prod, annoy, and delight differently.
+          </p>
+        </div>
       </div>
-      <img :src="userInput.prodImage.mediumImage" v-else/>
-      <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' />
-      <input type="submit" value="Get Link" class='button' :disabled="error">
-    </form>
-    <h3 id='suabiLink'><a :href='this.suabiLink'>shutupandbuy.it{{ this.suabiLink }}</a></h3>
-    <div class='masonry'>
-      <div class="item" v-for="sl in this.suabiLinks">
-        <a :href="'/s/' + sl.suabiId">
-          <img :src="sl.prodImage.mediumImage"/>
-          <h4>{{ sl.message }}</h4>
-        </a>
+
+      <div id='topTen'>
+        <h2 id='topTenTitle'>Top 10 Suabits</h2>
+        <div id="items">
+          <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="sl">
+            <a :href="'/s/' + sl.suabiId">
+              <div class='ranking'>{{ i + 1 }}</div>
+              <img class='prodImage' :src="sl.prodImage.mediumImage"/>
+              <div class='visits'>{{ sl.visits }} clicks</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="faqIntro">
+        <h2 id="faqTitle">FAQ</h2>
+        <div class="faqQuestion">You probably have some questions.</div>
+        <div class="faqAnswer" style="font-size: 18px; line-height: 30px;">So we thought of a few for you. If these don't satisfy, feel free to ask us on Twitter @ShutUpNBuyIt</div>
+        <div><a class="button" href="https://twitter.com/intent/tweet?text=@ShutUpNBuyIt">Tweet Us</a></div>
+      </div>
+      <div class='masonry'>
+        <div class='faqItem'>
+          <div class="leftCol"><div class="faqIcon">?</div></div>
+          <div class="rightCol">
+            <h3 class='faqQuestion'>Is this serious?</h3>
+            <p class='faqAnswer'>Sure! No? I mean, who can tell these days anyway.</p>
+          </div>
+        </div>
+        <div class='faqItem'>   
+          <div class="leftCol"><div class="faqIcon">?</div></div>
+          <div class="rightCol">   
+            <h3 class='faqQuestion'>How does this make money?</h3>
+            <p class='faqAnswer'>It doesn’t. Got any ideas? Server costs are encroaching on my Amazon trinkets budget.</p>
+          </div>
+        </div>
+        <div class='faqItem'>
+          <div class="leftCol"><div class="faqIcon">?</div></div>
+          <div class="rightCol">
+            <h3 class='faqQuestion'>Why did you make this?</h3>
+            <p class='faqAnswer'>Because the world NEEDS more stuff. We’re like Girl Scouts peddling cookies. But not cute and not cookies.</p>
+          </div>
+        </div>
+        <div class='faqItem'>
+          <div class="leftCol"><div class="faqIcon">?</div></div>          
+          <div class="rightCol">
+            <h3 class='faqQuestion'>Why just Amazon links?</h3>
+            <p class='faqAnswer'>Where else do you get stuff? Also, because of pretty pictures we get from their api.</p>
+          </div>
+        </div>
+        <div class='faqItem'>
+          <div class="leftCol"><div class="faqIcon">?</div></div>          
+          <div class="rightCol">
+            <h3 class='faqQuestion'>Who can I be righteously indignant to about this horrible website?</h3>
+            <p class='faqAnswer'>Um… Twitter is a great place for that sort of thing. Just <a href="https://twitter.com/intent/tweet?text=@ShutUpNBuyIt">@ShutUpNBuyIt</a> and we’ll hear you.</p>
+          </div>
+        </div>
+        <div class='faqItem'>        
+          <div class="leftCol"><div class="faqIcon">?</div></div>
+          <div class="rightCol">
+            <h3 class='faqQuestion'>You’re brilliant! How can I say that to you?</h3>
+            <p class='faqAnswer'>Thanks! Twitter again. Yep just <a href="https://twitter.com/intent/tweet?text=@ShutUpNBuyIt">throw it out there</a>.</p>
+          </div>
+        </div>
       </div>
     </div>
+    <div class='testimonial'>"If Amazon had a tagline it would definitely be: Shut up and buy it."
+    <div class='credit'><strong>- Carl Silverthrone,</strong> Suab.it user and pencil collector.</div></div>
+
+    <div id="footer">Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> and <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
   </div>
 </template>
 
@@ -46,7 +143,7 @@
         suabiLinks: [],
         suabiLink: '',
         userInput: {
-          message: '',
+          // message: '',
           prodUrl: '',
           prodImage: {
             smallImage: '',
@@ -60,7 +157,7 @@
     // We have added a simple method to add new suabiLinks to our Firebase.
     methods: {
       addSuabiLink: function () {
-        if (this.userInput.prodUrl !== '' && this.userInput.message !== '') {
+        if (this.userInput.prodUrl !== '') { // && this.userInput.message !== ''
           var id = hash.digest(this.userInput).substr(2, 10)
           this.suabiLink = '/p/' + id
           let _this = this
@@ -68,7 +165,7 @@
             if (error) {
               console.log('Data could not be saved.' + error)
             } else {
-              _this.userInput.message = ''
+              // _this.userInput.message = ''
               _this.userInput.prodUrl = ''
               _this.userInput.prodImage = {
                 smallImage: '',
@@ -81,13 +178,13 @@
       },
       fetchSuabis: function () {
         let _this = this
-        window.firebaseDB.limitToLast(35).on('child_added', function (snapshot) {
+        window.firebaseDB.orderByChild('visits').limitToLast(10).on('child_added', function (snapshot) {
           let item = snapshot.val()
-          let char = ''
-          if (item.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
-          item.prodUrl += char + 'tag=shutupandbuyi-20'
+          // let char = ''
+          // if (item.prodUrl.indexOf('?') > -1) { char = '&' } else { char = '?' }
+          // item.prodUrl += char + 'tag=shutupandbuyi-20'
           item.suabiId = snapshot.key
-          _this.suabiLinks.push(item)
+          _this.suabiLinks.unshift(item)
         })
       },
       getProductImage: function () {
@@ -163,9 +260,14 @@
   }
 
   #headline {
-    max-width: 420px;
     margin: 0 auto;
-    padding: 30px 0px;
+    font-size: 4em;
+    font-family: 'Passion One', cursive;
+  }
+
+  #intro {
+    padding: 20px;
+    background-color: #c7c7c71c;
   }
 
   .center {
@@ -174,17 +276,16 @@
     max-width: 600px;
     width: 90%;
     margin-bottom: 20px;
-    border-color: #c7c7c7;
-    border-style: solid;
-    border-width: 1px 1px 3px 1px;
+    border: 0;
     border-radius: 5px;
     line-height: 31px;
     font-size: 20px;
     padding: 10px;
   }
 
-  #suabiLink{
+  #suabiLink a{
     padding: 15px 0px;
+    color: white; 
   }
 
   .error {
@@ -192,7 +293,7 @@
   }
 
   a {
-    color: rgba(0,0,0,.4);
+    color: black;
   }
 
   a:hover {
@@ -200,28 +301,21 @@
   }
 
   .button {
-    /*-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  	box-shadow:inset 0px 1px 0px 0px #ffffff;*/
-  	background-color: rgba(46,204,64, .7);
-  	-moz-border-radius:6px;
-  	-webkit-border-radius:6px;
-  	border-radius:6px;
-  	border:1px solid #dcdcdc;
-  	display:inline-block;
-  	cursor:pointer;
-  	color:black;
-  	font-family:Arial;
-  	font-size:22px;
-  	font-weight:bold;
-  	padding:14px 44px;
-  	text-decoration:none;
-  	/*text-shadow:0px 1px 0px #ffffff;*/
-    margin: 0 auto;
+    text-decoration: none;
+    color: #ffffff!important;
+    border-width: 10px!important;
+    border-color: #7272ff;
+    border-radius: 100px;
+    letter-spacing: 1px;
+    font-size: 18px;
+    font-weight: 700!important;
+    text-transform: uppercase!important;
+    padding: 0.7em 1.4em;
+    background-color: #7272ff;
   }
 
   .button:hover {
-  	background-color: rgb(46,204,64);
+  	background-color: #09e1c0;
   }
 
   .button:active {
@@ -239,9 +333,12 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    padding-top: 50px;
+    /* padding-top: 50px; */
     font-size: 20px;
-    padding: 50px 20px 0 20px;
+  }
+
+  #content div {
+    padding: 20px;
   }
 
   #titleImage{
@@ -260,36 +357,227 @@
     position: relative;
   }
 
-  #landingTitle {
-    font-size: 4em;
+  .testimonial {
+    margin-top: 50px;
+    padding: 50px !important;
+    height: 100%;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.5em;
+    color: white;
+    background-blend-mode: overlay;
+    background-color: initial!important;
+    background-image: url(../assets/coding-background-texture.jpg),linear-gradient(180deg,#474ab6 0%,#9271f6 100%)!important;
   }
 
-  @media (max-width: 480px) {
+  #topTen {
+    margin-bottom: 50px;
+    background-size: cover;    
+    background-blend-mode: overlay;
+    background-color: initial!important;
+    background-image: url(../assets/coding-background-texture.jpg),linear-gradient(180deg,#474ab6 0%,#9271f6 100%)!important;
+  }
+
+  #footer {
+    font-size: 12px;
+    padding: 10px;
+    background-color: rgba(0,0,0,.8);
+    color: white;
+  }
+
+  #footer a {
+    color: gray;
+  }
+
+  .credit {
+    font-weight: normal;
+    color: #d4ccff!important;
+    font-size: 18px;
+    line-height: 1.2em;
+  }
+
+  @media (min-width: 480px) {
     .masonry { /* Masonry container */
       column-count: 2;
       column-gap: 1em;
     }
-    #Home {
-      padding: 30px 4px 0 4px;
+    .faqIntro {
+      width: 33%;
+      float:left;
+      text-align: left;
+    }
+
+    .item.even {
+      left: -120px;
+    }
+
+    .item.odd {
+      left: 120px;
     }
   }
 
-  @media (min-width: 481px) {
+  @media (max-width: 481px) {
     .masonry { /* Masonry container */
-      column-count: 4;
+      column-count: 1;
       column-gap: 1em;
     }
+    .faqIntro {
+      width: 100%;
+      float:left;
+      text-align: left;
+    }
+    .item.even {
+      left: -90px;
+    }
+    .item.odd {
+      left: 90px;
+    }
   }
-  .item { /* Masonry bricks or child elements */
+
+  h2 {
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.5em;
+    margin-bottom: 0;
+  }
+
+  #topTenTitle {
+    color: white!important;
+  }
+
+  #faqTitle{
+    padding-left: 20px;
+    color: #7272ff!important;
+    margin: 0;
+  }
+
+  .faqItem { /* Masonry bricks or child elements */
     display: inline-block;
-    margin: 0 0 1em;
     width: 100%;
-    border-color: #c7c7c7;
-    border-style: solid;
-    border-width: 1px 1px 3px 1px;
-    border-radius: 5px;
-    background-color: #fff;
-    box-sizing: border-box;
-    padding: 5%;
+    text-align: left;
+  }
+
+  .faqIcon {
+    color: white;
+    background-color: #09e1c0;
+    width: 30px;
+    height: 30px;
+    display: block;
+    border-radius: 16px;
+    line-height: 30px;
+    font-size: 24pt;
+    padding: 0 !important;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .faqItem .leftCol {
+    display: table-cell;
+    width: 32px;
+    line-height: 0;
+    padding: 0px 15px !important;
+  }
+
+  .faqItem .rightCol {
+    padding: 0 !important;
+    display: table-cell;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .faqQuestion {
+    font-weight: 700;
+    color: #2e2545!important;
+    line-height: 1.5em;
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .faqAnswer {
+    color: #8585bd!important;
+    font-size: 16px;
+  }
+
+  #items {
+    width: 240px;
+    margin: 0 auto;
+    padding-bottom: 170px !important;
+  }
+
+  .item { 
+    width: 100%;
+    height: 120px;
+    display: block;
+    position: relative;
+  }
+
+  .item a {
+    text-decoration: none;
+  }
+
+  .ranking {
+    width: 40px;
+    height: 40px;
+    background-color: #7272ff;
+    color: white;
+    display: block;
+    border-radius: 25px;
+    line-height: 40px;
+    font-size: 24pt;
+    top: 35px;
+    left: 0px;
+    position: relative;
+    padding: 0 !important;
+  }
+
+  .visits {
+    height: 50px;
+    padding: 0 !important;
+    display: inline-block;
+    color: white;
+  }
+
+  .prodImage {
+    border-radius: 80px;
+  }
+
+  .feature-icon {
+    width: 60px;  
+  }
+
+  #header{
+    color: white;
+    width: 100%;
+    background: url(../assets/laptop-background.jpg) top center no-repeat;
+    background-color: rgba(0,0,0,.6);
+    background-blend-mode: multiply;
+    background-size: cover;
+    padding: 60px 0px;
+  }
+
+  @media (max-width: 480px) {
+    .feature {
+      width: 100%;
+      padding-top: 0;
+    }
+  }
+
+  .features {
+    display: inline-block;
+    width: 100%;
+  }
+
+  @media (min-width: 481px) {
+    .feature {
+      width: 33.3%;
+      float: left;
+      padding: 10px 20px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+  }
+
+  * {
+      box-sizing: border-box;
   }
 </style>

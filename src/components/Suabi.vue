@@ -1,14 +1,14 @@
 <template>
   <div id="Suabi">
-    <div class="loading" v-if="loading">
+    <!-- <div class="loading" v-if="loading">
       Loading...
-    </div>
-    <img :src="userInput.prodImage.largeImage" v-else id='prodImage'/>
-    <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1>
-    <!-- <h1 class='slide2 fade-in is-paused'>Shut up and buy it.</h1> -->
-    <button v-on:click="suabiClick" class='button' v-if="loading === false">Shut up and buy it</button>
+    </div> -->
+    <!-- <img :src="userInput.prodImage.largeImage" v-else id='prodImage'/> -->
+    <!-- <h1 class='slide1 fade-out is-paused'>{{ this.userInput.message }}</h1> -->
+    <h1 class='flashText'>Shut up and buy it.</h1>
+    <!-- <button v-on:click="suabiClick" class='button' v-if="loading === false">Shut up and buy it</button> -->
     <!-- <h1><a :href='this.userInput.prodUrl'>{{ this.userInput }}</a></h1> -->
-    <div class='fb-comments' :data-href="'https://shutupandbuy.it' + this.$route.path" data-numposts='20' :data-width='this.width' id='comments'></div>
+    <!-- <div class='fb-comments' :data-href="'https://shutupandbuy.it' + this.$route.path" data-numposts='20' :data-width='this.width' id='comments'></div> -->
   </div>
 </template>
 
@@ -87,6 +87,8 @@
     background-color: #fff;
     padding: 5% 5% 30px 5%;
     box-sizing: border-box;
+    font-family: 'Passion One', cursive;
+    font-size: 40px;
   }
 
   @keyframes fadeIn {
@@ -115,4 +117,31 @@
     animation-play-state: paused;
   }
 
+  .flashText {
+    animation-name: flashText;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+  }
+
+  @keyframes flashText {
+      from {color: white;}
+      to {color: black;}
+  }
+
+  .flashBackground {
+    animation-name: flashBackground;
+    animation-duration: .4s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+  }
+
+  @keyframes flashBackground {
+      from {background-color: black;}
+      to {background-color: white;}
+  }
 </style>
