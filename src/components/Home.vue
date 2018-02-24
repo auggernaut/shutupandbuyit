@@ -3,7 +3,7 @@
     <!-- <img src="../assets/suabi.png" id="titleImage"> -->
     <header id="header">
       <h1 id='headline'>Shut up and buy it.</h1>
-      <h3>Enter an Amazon product link.<br/>Get a short link. Share it. Bask in the joy.</h3>
+      <h3>Enter an Amazon product link.<br/>Get a short link. Share the joy.</h3>
       <form id="form" v-on:submit.prevent="addSuabiLink">
         <input type="text" v-model="userInput.prodUrl" placeholder="Paste an Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
         <div class="loading" v-if="loading">
@@ -30,7 +30,7 @@
           <img src='../assets/trophy.svg' class='feature-icon' />
           <h3 class="short">Compete</h3>
           <p class="flush-bottom">
-            Join the world's smallest community of unabashed product pushers. See if you can make the top 10!
+            Join the world's smallest community of unabashed product pushers. See if you can make the Top 10!
           </p>
         </div>
         <div class="feature">
@@ -42,9 +42,9 @@
         </div>
         <div class="feature">
           <img src='../assets/support.svg' class='feature-icon' />          
-          <h3 class="short">Customize</h3>
+          <h3 class="short">Get Reviewed</h3>
           <p class="flush-bottom">
-            Coming soon: select from a variety of interstitials--each designed to prod, annoy, and delight differently.
+            We write reviews of the Top 10 most clicked Suabits. Our writers are accomplished at amplifying the awesome.
           </p>
         </div>
       </div>
@@ -52,8 +52,8 @@
       <div id='topTen'>
         <h2 id='topTenTitle'>Top 10 Suabits</h2>
         <div id="items">
-          <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="sl">
-            <a :href="'/s/' + sl.suabiId">
+          <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="i">
+            <a :href="'/p/' + sl.suabiId">
               <div class='ranking'>{{ i + 1 }}</div>
               <img class='prodImage' :src="sl.prodImage.mediumImage"/>
               <div class='visits'>{{ sl.visits }} clicks</div>
