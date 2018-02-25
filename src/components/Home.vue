@@ -6,9 +6,6 @@
       <h3>Enter an Amazon product link.<br/>Get a short link. Share the joy.</h3>
       <form id="form" v-on:submit.prevent="addSuabiLink">
         <input type="text" v-model="userInput" placeholder="Paste an Amazon Product Url" class='center' v-bind:class="{ error: error }"> <!--  @change="getProductDetails" -->
-        <!-- <div class="loading" v-if="loading">
-          Loading...
-        </div> -->
         <div class="errorMessage" v-if="error">
           {{this.errorMessage}}
         </div>
@@ -17,7 +14,10 @@
         <input type="submit" value="Loading" class='button' v-if="loading" disabled="true">
         <input type="submit" value="Get Link" class='button' v-else>
       </form>
-      <h3 id='suabiLink'><a :href='this.suabiLink'>suab.it{{ this.suabiLink }}</a></h3>
+      <h3 id='suabiLink' class="copy-btn" data-clipboard-target="#foo">
+          <span id="foo">suab.it{{ this.suabiLink }}</span>
+          <span><img src="../assets/clippy.svg" alt="Copy to clipboard"></span>
+      </h3>
     </header>
 
     <div id="intro">
@@ -128,6 +128,19 @@
   var hash = require('json-hash')
   var axios = require('axios')
   var _ = require('lodash')
+  var Clipboard = require('clipboard')
+  var clipboard = new Clipboard('.copy-btn')
+
+  clipboard.on('success', function (e) {
+    console.info('Action:', e.action)
+    console.info('Text:', e.text)
+    console.info('Trigger:', e.trigger)
+    e.clearSelection()
+  })
+  clipboard.on('error', function (e) {
+    console.error('Action:', e.action)
+    console.error('Trigger:', e.trigger)
+  })
 
   export default {
     name: 'Home',
@@ -294,6 +307,12 @@
     background-color: #c7c7c71c;
   }
 
+  .copy-btn img {
+    width: 20px;
+    height: 20px;
+    /* float: left; */
+  }
+
   .center {
     display: block;
     margin: 0 auto;
@@ -307,9 +326,12 @@
     padding: 10px;
   }
 
-  #suabiLink a{
+  #suabiLink{
     padding: 15px 0px;
-    color: white; 
+    color: white;
+    cursor: pointer;
+    width: 300px;
+    margin: 0 auto;
   }
 
   .error {
