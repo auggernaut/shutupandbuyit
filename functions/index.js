@@ -14,8 +14,8 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
   });
   admin.database().ref('suabiLinks/' + suabiId).once('value', (snapshot) => {
     var item = snapshot.val();
-    const message = item.message.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
-    const image = item.prodImage.largeImage;
+    const productTitle = item.title.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    const image = item.images.largeImage;
     const prodUrl = item.prodUrl;
     const delimiter = (prodUrl.indexOf('?') > -1) ? '&' : '?'
     const doc =
@@ -23,15 +23,15 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
       "<meta property='og:title' content='Shut up and buy it'/>" +
       "<meta property='og:image' content='" + image + "'/>"  +
       // "<meta property='og:site_name' content='Shut up and buy it'/>" +
-      "<meta property='og:description' content='" + message + "'/>" +
+      "<meta property='og:description' content='" + productTitle + "'/>" +
       "<meta name='twitter:card' content='summary_large_image'>" +
       "<meta name='twitter:site' content='https://suab.it'>" +
       "<meta name='twitter:creator' content='@ShutUpNBuyIt'>" +
       "<meta name='twitter:title' content='Shut up and buy it'>" +
-      "<meta name='twitter:description' content='" + message + "'>" +
-      "<meta name='twitter:text:description' content='" + message + "'>" +
+      "<meta name='twitter:description' content='" + productTitle + "'>" +
+      "<meta name='twitter:text:description' content='" + productTitle + "'>" +
       "<meta name='twitter:image' content='" + image + "'>" +
-      "<link href='/static/css/app.e3bb14f2b7019fa3a88190b2ff103c47.css' rel='stylesheet'>" +
+      "<link href='/static/css/app.9c9e6622cf77123aecd0ab9a39a613a3.css' rel='stylesheet'>" +
       "<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet'>" +
       "<title>Shut up and buy it</title>" +
       "<script type='text/javascript'> var timer = setTimeout(function() {window.location.href = '" + prodUrl + delimiter + "'}, 2000);</script>" +

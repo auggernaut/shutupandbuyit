@@ -59,7 +59,7 @@
           <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="i">
             <a :href="'/p/' + sl.suabiId">
               <div class='ranking'>{{ i + 1 }}</div>
-              <img class='prodImage' :src="sl.prodImage.mediumImage"/>
+              <img class='prodImage' :src="sl.images.mediumImage"/>
               <div class='visits'>{{ sl.visits }} clicks</div>
             </a>
           </div>
