@@ -5,13 +5,17 @@
       <h1 id='headline'>Shut up and buy it.</h1>
       <h3>Enter an Amazon product link.<br/>Get a short link. Share the joy.</h3>
       <form id="form" v-on:submit.prevent="addSuabiLink">
-        <input type="text" v-model="userInput.prodUrl" placeholder="Paste an Amazon Product Url" class='center' v-bind:class="{ error: error }" @change="getProductImage">
-        <div class="loading" v-if="loading">
-          Loading image...
+        <input type="text" v-model="userInput" placeholder="Paste an Amazon Product Url" class='center' v-bind:class="{ error: error }"> <!--  @change="getProductDetails" -->
+        <!-- <div class="loading" v-if="loading">
+          Loading...
+        </div> -->
+        <div class="errorMessage" v-if="error">
+          {{this.errorMessage}}
         </div>
-        <img :src="userInput.prodImage.mediumImage" v-else/>
+        <!-- <img :src="productDetails.images.mediumImage" v-else/> -->
         <!-- <textarea type="text" v-model="userInput.message" placeholder="Because..." id='message' class='center' /> -->
-        <input type="submit" value="Get Link" class='button' :disabled="error">
+        <input type="submit" value="Loading" class='button' v-if="loading" disabled="true">
+        <input type="submit" value="Get Link" class='button' v-else>
       </form>
       <h3 id='suabiLink'><a :href='this.suabiLink'>suab.it{{ this.suabiLink }}</a></h3>
     </header>
@@ -35,22 +39,22 @@
         </div>
         <div class="feature">
           <img src='../assets/networking.svg' class='feature-icon' />          
-          <h3 class="short">Shout</h3>
+          <h3 class="short">Nudge</h3>
           <p class="flush-bottom">
-            It's too easy to be just another annoying voice on social media. Let us shout at people to shut up and buy it for you.
+            It's too easy to be just another annoying voice on social media. Let us tell people to shut up and buy it for you.
           </p>
         </div>
         <div class="feature">
           <img src='../assets/support.svg' class='feature-icon' />          
           <h3 class="short">Get Reviewed</h3>
           <p class="flush-bottom">
-            We write reviews of the Top 10 most clicked Suabits. Our writers are accomplished at amplifying the awesome.
+            Coming soon: We write reviews of the Top 10 most clicked Suabis. Our writers are great at amplifying the awesome.
           </p>
         </div>
       </div>
 
       <div id='topTen'>
-        <h2 id='topTenTitle'>Top 10 Suabits</h2>
+        <h2 id='topTenTitle'>Top 10 Suabis</h2>
         <div id="items">
           <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="i">
             <a :href="'/p/' + sl.suabiId">
@@ -140,12 +144,14 @@
       return {
         loading: false,
         error: false,
+        errorMessage: '',
         suabiLinks: [],
         suabiLink: '',
-        userInput: {
-          // message: '',
+        userInput: '',
+        productDetails: {
+          title: '',
           prodUrl: '',
-          prodImage: {
+          images: {
             smallImage: '',
             mediumImage: '',
             largeImage: ''
@@ -157,24 +163,94 @@
     // We have added a simple method to add new suabiLinks to our Firebase.
     methods: {
       addSuabiLink: function () {
-        if (this.userInput.prodUrl !== '') { // && this.userInput.message !== ''
-          var id = hash.digest(this.userInput).substr(2, 10)
-          this.suabiLink = '/p/' + id
-          let _this = this
-          window.firebaseDB.child(id).set(this.userInput, function (error) {
-            if (error) {
-              console.log('Data could not be saved.' + error)
-            } else {
-              // _this.userInput.message = ''
-              _this.userInput.prodUrl = ''
-              _this.userInput.prodImage = {
-                smallImage: '',
-                mediumImage: '',
-                largeImage: ''
-              }
-            }
-          })
+        this.loading = true
+        this.error = false
+        var _this = this
+        this.productDetails.prodUrl = this.userInput
+        var httpsRegEx = 'https?:\/\/.[^\/]*amazon.*[^*]+'
+        if (this.productDetails.prodUrl.match(httpsRegEx)) {
+          var url = this.productDetails.prodUrl.match(httpsRegEx)[0]
+          var asin = url.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
+          if (asin === null) {
+            this.errorMessage = 'Url does not contain a product id.'
+            this.error = true
+            this.loading = false
+            return
+          }
+        } else {
+          this.errorMessage = 'Not an amazon url.'
+          this.error = true
+          this.loading = false
+          return
         }
+        var saUrl = 'https://suabi-amazon.herokuapp.com/pId/' + asin[1]
+        axios.get(saUrl)
+        .then(function (response) {
+          _this.loading = false
+          console.log(response)
+          var largeImage, smallImage, mediumImage, title
+          if (response.data !== '') {
+            if (_.findKey(response, (k) => k.LargeImage) !== undefined) {
+              largeImage = response.data.LargeImage.URL
+            } else if (_.findKey(response.data.ImageSets, (k) => k.LargeImage) !== undefined) {
+              largeImage = response.data.ImageSets.ImageSet.LargeImage.URL
+            }
+            if (_.findKey(response, (k) => k.MediumImage) !== undefined) {
+              mediumImage = response.data.MediumImage.URL
+            } else if (_.findKey(response.data.ImageSets, (k) => k.MediumImage) !== undefined) {
+              mediumImage = response.data.ImageSets.ImageSet.MediumImage.URL
+            }
+            if (_.findKey(response, (k) => k.SmallImage) !== undefined) {
+              smallImage = response.data.SmallImage.URL
+            } else if (_.findKey(response.data.ImageSets, (k) => k.SmallImage) !== undefined) {
+              smallImage = response.data.ImageSets.ImageSet.SmallImage.URL
+            }
+            if (_.findKey(response, (k) => k.ItemAttributes) !== undefined) {
+              title = response.data.ItemAttributes.Title
+            }
+          }
+          if (smallImage !== undefined && mediumImage !== undefined && largeImage !== undefined && title !== undefined) {
+            _this.error = false
+            _this.productDetails.title = title
+            _this.productDetails.images = {
+              smallImage: smallImage,
+              mediumImage: mediumImage,
+              largeImage: largeImage
+            }
+            // data checks out... push to firebase
+            var id = hash.digest(_this.userInput).substr(2, 7)
+            _this.suabiLink = '/p/' + id
+            window.firebaseDB.child(id).set(_this.productDetails, function (error) {
+              if (error) {
+                console.log('Data could not be saved.' + error)
+                _this.error = true
+                _this.errorMessage = error
+              } else {
+                // reset data model
+                _this.userInput = ''
+                _this.productDetails.title = ''
+                _this.productDetails.images = {
+                  smallImage: '',
+                  mediumImage: '',
+                  largeImage: ''
+                }
+              }
+            })
+          } else {
+            // didnt find all product details.
+            _this.error = true
+            _this.errorMessage = 'Product data not returned successfully from API.'
+            return
+          }
+        })
+        .catch(function (error) {
+          // some other failure...
+          console.log(error.message)
+          _this.loading = false
+          _this.error = true
+          _this.errorMessage = error.message
+          return
+        })
       },
       fetchSuabis: function () {
         let _this = this
@@ -186,58 +262,6 @@
           item.suabiId = snapshot.key
           _this.suabiLinks.unshift(item)
         })
-      },
-      getProductImage: function () {
-        this.loading = true
-        var _this = this
-        this.userInput.prodUrl = this.userInput.prodUrl.match('https?:\/\/[^*]+')[0]
-        var asin = this.userInput.prodUrl.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
-        if (asin === null) {
-          // product id not found.
-          this.error = true
-          this.loading = false
-          return
-        }
-        var saUrl = 'https://suabi-amazon.herokuapp.com/pId/' + asin[1]
-        axios.get(saUrl)
-          .then(function (response) {
-            _this.loading = false
-            console.log(response)
-            var largeImage, smallImage, mediumImage
-            if (response.data !== '') {
-              if (_.findKey(response, (k) => k.LargeImage) !== undefined) {
-                largeImage = response.data.LargeImage.URL
-              } else if (_.findKey(response.data.ImageSets, (k) => k.LargeImage) !== undefined) {
-                largeImage = response.data.ImageSets.ImageSet.LargeImage.URL
-              }
-              if (_.findKey(response, (k) => k.MediumImage) !== undefined) {
-                mediumImage = response.data.MediumImage.URL
-              } else if (_.findKey(response.data.ImageSets, (k) => k.MediumImage) !== undefined) {
-                mediumImage = response.data.ImageSets.ImageSet.MediumImage.URL
-              }
-              if (_.findKey(response, (k) => k.SmallImage) !== undefined) {
-                smallImage = response.data.SmallImage.URL
-              } else if (_.findKey(response.data.ImageSets, (k) => k.SmallImage) !== undefined) {
-                smallImage = response.data.ImageSets.ImageSet.SmallImage.URL
-              }
-            }
-            if (smallImage !== undefined && mediumImage !== undefined && largeImage !== undefined) {
-              _this.error = false
-              _this.userInput.prodImage = {
-                smallImage: smallImage,
-                mediumImage: mediumImage,
-                largeImage: largeImage
-              }
-            } else {
-              // didnt find all images.
-              _this.error = true
-            }
-          })
-          .catch(function (error) {
-            console.log(error.message)
-            _this.loading = false
-            _this.error = true
-          })
       }
     }
   }
@@ -290,6 +314,12 @@
 
   .error {
     border: 1px solid red;
+  }
+
+  .errorMessage {
+    color: red;
+    top: -8px;
+    position: relative;
   }
 
   a {
