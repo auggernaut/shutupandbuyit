@@ -17,7 +17,9 @@
       <h3 id='suabiLink' class="copy-btn" data-clipboard-target="#foo">
           <span id="foo">suab.it{{ this.suabiLink }}</span>
           <span><img src="../assets/clippy.svg" alt="Copy to clipboard"></span>
+          <div><transition name="fade"><span v-if="copied">Copied!</span></transition>&nbsp;</div>
       </h3>
+      
     </header>
 
     <div id="intro">
@@ -34,27 +36,27 @@
           <img src='../assets/trophy.svg' class='feature-icon' />
           <h3 class="short">Compete</h3>
           <p class="flush-bottom">
-            Join the world's smallest community of unabashed product pushers. See if you can make the Top 10!
+            Join the world's smallest community of shameless product pushers. See if you can make the Top 10!
           </p>
         </div>
         <div class="feature">
           <img src='../assets/networking.svg' class='feature-icon' />          
           <h3 class="short">Nudge</h3>
           <p class="flush-bottom">
-            It's too easy to be just another annoying voice on social media. Let us tell people to shut up and buy it for you.
+            Don't be just another annoying voice on social media. Let us tell people to shut up and buy it for you.
           </p>
         </div>
         <div class="feature">
           <img src='../assets/support.svg' class='feature-icon' />          
           <h3 class="short">Get Reviewed</h3>
           <p class="flush-bottom">
-            Coming soon: We write reviews of the Top 10 most clicked Suabis. Our writers are great at amplifying the awesome.
+            Coming soon: We write reviews of the Top 10 most clicked SUABIs. Our writers are great at amplifying the awesome.
           </p>
         </div>
       </div>
 
       <div id='topTen'>
-        <h2 id='topTenTitle'>Top 10 Suabis</h2>
+        <h2 id='topTenTitle'>Top 10 SUABIs</h2>
         <div id="items">
           <div class="item" v-for="(sl, i) in this.suabiLinks" :class="{'even': i % 2 === 0, 'odd': i % 2 !== 0 }" v-bind:key="i">
             <a :href="'/p/' + sl.suabiId">
@@ -104,7 +106,7 @@
         <div class='faqItem'>
           <div class="leftCol"><div class="faqIcon">?</div></div>          
           <div class="rightCol">
-            <h3 class='faqQuestion'>Who can I be righteously indignant to about this horrible website?</h3>
+            <h3 class='faqQuestion'>Who can I be angry at about this horrible website?</h3>
             <p class='faqAnswer'>Um… Twitter is a great place for that sort of thing. Just <a href="https://twitter.com/intent/tweet?text=@ShutUpNBuyIt">@ShutUpNBuyIt</a> and we’ll hear you.</p>
           </div>
         </div>
@@ -131,23 +133,28 @@
   var Clipboard = require('clipboard')
   var clipboard = new Clipboard('.copy-btn')
 
-  clipboard.on('success', function (e) {
-    console.info('Action:', e.action)
-    console.info('Text:', e.text)
-    console.info('Trigger:', e.trigger)
-    e.clearSelection()
-  })
-  clipboard.on('error', function (e) {
-    console.error('Action:', e.action)
-    console.error('Trigger:', e.trigger)
-  })
-
   export default {
     name: 'Home',
     created () {
       // fetch the data when the view is created and the data is
       // already being observed
       this.fetchSuabis()
+      // setup copy handlers
+      var _this = this
+      clipboard.on('success', function (e) {
+        console.info('Action:', e.action)
+        console.info('Text:', e.text)
+        console.info('Trigger:', e.trigger)
+        _this.copied = true
+        setTimeout(function () {
+          _this.copied = false
+        }, 3000)
+        e.clearSelection()
+      })
+      clipboard.on('error', function (e) {
+        console.error('Action:', e.action)
+        console.error('Trigger:', e.trigger)
+      })
     },
     watch: {
       // call again the method if the route changes
@@ -156,11 +163,13 @@
     data () {
       return {
         loading: false,
+        copied: false,
         error: false,
         errorMessage: '',
         suabiLinks: [],
         suabiLink: '',
         userInput: '',
+        asin: '',
         productDetails: {
           title: '',
           prodUrl: '',
@@ -182,8 +191,8 @@
         this.productDetails.prodUrl = this.userInput
         var httpsRegEx = 'https?:\/\/.[^\/]*amazon.*[^*]+'
         if (this.productDetails.prodUrl.match(httpsRegEx)) {
-          var url = this.productDetails.prodUrl.match(httpsRegEx)[0]
-          var asin = url.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
+          this.productDetails.prodUrl = this.productDetails.prodUrl.match(httpsRegEx)[0]
+          var asin = this.productDetails.prodUrl.match('/([a-zA-Z0-9]{10})(?:[/?]|$)')
           if (asin === null) {
             this.errorMessage = 'Url does not contain a product id.'
             this.error = true
@@ -197,6 +206,7 @@
           return
         }
         var saUrl = 'https://suabi-amazon.herokuapp.com/pId/' + asin[1]
+        this.asin = asin[1]
         axios.get(saUrl)
         .then(function (response) {
           _this.loading = false
@@ -231,9 +241,9 @@
               largeImage: largeImage
             }
             // data checks out... push to firebase
-            var id = hash.digest(_this.userInput).substr(2, 7)
+            var id = hash.digest(_this.asin).substr(2, 7)
             _this.suabiLink = '/p/' + id
-            window.firebaseDB.child(id).set(_this.productDetails, function (error) {
+            window.firebaseDB.child(id).update(_this.productDetails, function (error) {
               if (error) {
                 console.log('Data could not be saved.' + error)
                 _this.error = true
@@ -631,5 +641,12 @@
 
   * {
       box-sizing: border-box;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>
