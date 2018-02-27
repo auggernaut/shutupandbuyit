@@ -31,7 +31,7 @@ exports.ogRewrite = functions.https.onRequest((req, res) => {
       "<meta name='twitter:description' content='" + productTitle + "'>" +
       "<meta name='twitter:text:description' content='" + productTitle + "'>" +
       "<meta name='twitter:image' content='" + image + "'>" +
-      "<link href='/static/css/app.9c9e6622cf77123aecd0ab9a39a613a3.css' rel='stylesheet'>" +
+      "<link href='/static/css/app.826d65c9727cd1e9803fc578597092e1.css' rel='stylesheet'>" +
       "<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet'>" +
       "<title>Shut up and buy it</title>" +
       "<script type='text/javascript'> var timer = setTimeout(function() {window.location.href = '" + prodUrl + delimiter + "'}, 2000);</script>" +
